@@ -87,7 +87,11 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 MODEL_INFERENCE_DIR_NAME = "model_inference"
+MODEL_INFERENCE_RESULTS_DIR = "inference_results"
 MODEL_INFERENCE_RESULTS_FILE = "inference_results.csv"
+
+MODEL_INFERENCE_METRICS_DIR_NAME = "inference_metrics"
+MODEL_INFERENCE_METRICS_FILE = "inference_metrics.json"
 
 
 

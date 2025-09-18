@@ -130,7 +130,7 @@ class AEEnsemblePredictor:
 
     def predict_from_dataframe(self, df: pd.DataFrame, save_path: Optional[str] = None) -> Dict[str, Any]:
         try:
-            # --- Ensure df is a pandas DataFrame ---
+            # Ensure df is a pandas DataFrame
             if not isinstance(df, pd.DataFrame):
                 expected_cols = ([self.time_col] + self.feature_order) if self.time_col else list(self.feature_order)
                 try:
@@ -140,46 +140,43 @@ class AEEnsemblePredictor:
                         f"Input must be a DataFrame with columns {expected_cols}, got {type(df)} instead: {e}"
                     )
 
-            # --- Validate feature columns are present ---
+            # Validate feature columns are present
             missing = [c for c in self.feature_order if c not in df.columns]
             if missing:
                 raise ValueError(f"Missing feature columns: {missing}")
 
-            # --- Time column (optional) ---
+            
             if self.time_col and self.time_col in df.columns:
                 ts = df[self.time_col].astype(str).to_numpy()
             else:
                 ts = np.array([str(i) for i in range(len(df))])
 
-            # --- Extract features as a *DataFrame* (for sklearn pipelines with named columns) ---
+            # Extract features
             X_df = df[self.feature_order].astype(np.float32)
 
-            # --- Scale/transform ---
+            # Scale/transform
             if self.scaler is not None:
                 try:
-                    X_scaled = self.scaler.transform(X_df)  # keep DataFrame with names
+                    X_scaled = self.scaler.transform(X_df)
                 except Exception as e:
-                    # Helpful message when a ColumnTransformer expects named columns
                     raise ValueError(
                         "Scaler/Preprocessor rejected the input. "
-                        "If your scaler is a scikit-learn ColumnTransformer/Pipeline that "
-                        "uses column names, you must pass a pandas DataFrame with those names. "
                         f"feature_order={self.feature_order}. Original error: {e}"
                     )
             else:
-                X_scaled = X_df.values  # no scaler -> just use the numeric values
+                X_scaled = X_df.values
 
-            # --- From here on, work with NumPy ---
+            # Work with NumPy array
             X = np.asarray(X_scaled, dtype=np.float32)
 
-            # --- Create sliding windows ---
+            # Create sliding windows 
             Xw = sliding_windows(X, self.W, self.step)
             Tw = window_right_edge_timestamps(ts, self.W, self.step)
 
             if Xw.shape[0] == 0:
                 raise HTTPException(status_code=400, detail="Input sequence too short for configured window size.")
 
-            # --- Batched inference ---
+            # Batched inference 
             per_model_errs: Dict[str, np.ndarray] = {}
             with torch.no_grad():
                 for name, model in self.models.items():
@@ -202,17 +199,51 @@ class AEEnsemblePredictor:
 
             output_dict = {"predictions": results}
 
-            # --- Save to file if path given ---
+            # compute metrics in same schema as training 
+            feature_means = np.mean(X, axis=0).tolist()
+            feature_stds = np.std(X, axis=0).tolist()
+            global_mean = float(np.mean(X))
+            global_std = float(np.std(X))
+
+            error_median = float(np.median(ens_scores))
+            error_p95 = float(np.percentile(ens_scores, 95))
+
+            anomaly_rate = float(np.mean(flags))
+
+            live_metrics = {
+                "feature_stats": {
+                    "mean": feature_means,
+                    "std": feature_stds,
+                    "global_mean": global_mean,
+                    "global_std": global_std,
+                },
+                "error_stats": {
+                    "median": error_median,
+                    "p95": error_p95,
+                },
+                "anomaly_rate": anomaly_rate,
+            }
+            
+
+            # Save predictions 
             save_path = save_path or self.model_training_config.inference_results_file
             if save_path:
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
                 with open(save_path, "w") as f:
                     json.dump(output_dict, f, indent=4)
 
+            # Save metrics
+            metrics_path = self.model_training_config.model_inference_metrics_file
+            os.makedirs(os.path.dirname(metrics_path), exist_ok=True)
+            with open(metrics_path, "w") as f:
+                json.dump(live_metrics, f, indent=4)
+
             return output_dict
 
         except Exception as e:
             raise AnomalyDetectionException(e, sys)
+
+
 
 
 

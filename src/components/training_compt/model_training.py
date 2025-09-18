@@ -241,6 +241,7 @@ class ModelTraining:
                 except Exception:
                     pass
             raise AnomalyDetectionException(e, sys) from e
+        
 
     # Inference utilities
     @torch.no_grad()
@@ -357,6 +358,32 @@ class ModelTraining:
                 break
             print(f"Inferred data shape: seq_len={seq_len}, n_features={n_features}")
 
+            
+            train_dataset = train_loader.dataset
+            sum_feat = np.zeros(n_features, dtype=np.float64)
+            sumsq_feat = np.zeros(n_features, dtype=np.float64)
+            count_feat = 0
+            for i in range(len(train_dataset)):
+                item = train_dataset[i]
+                xb = item[0] if isinstance(item, (tuple, list)) else item
+                xb_np = _tensor_to_numpy(xb)
+                xb_flat = xb_np.reshape(-1, n_features)  # collapse seq dim
+                sum_feat += xb_flat.sum(axis=0)
+                sumsq_feat += (xb_flat ** 2).sum(axis=0)
+                count_feat += xb_flat.shape[0]
+
+            feature_means = (sum_feat / max(1, count_feat)).tolist()
+            feat_var = (sumsq_feat / max(1, count_feat)) - np.array(feature_means) ** 2
+            feature_stds = np.sqrt(np.maximum(feat_var, 1e-12)).tolist()
+            _total_sum = float(sum_feat.sum())
+            
+            _total_sumsq = float(sumsq_feat.sum())
+            _total_count = float(max(1, count_feat * n_features))
+
+            global_feature_mean = float(_total_sum / _total_count)
+            global_feature_var = (_total_sumsq / _total_count) - (global_feature_mean ** 2)
+            global_feature_std = float(np.sqrt(max(global_feature_var, 1e-12)))
+
             models: Dict[str, nn.Module] = {
                 "lstm": LSTMAutoencoder(
                     seq_len=seq_len,
@@ -466,10 +493,15 @@ class ModelTraining:
 
             results: Dict[str, Any] = {"models": trained, "histories": histories}
 
-            # ---- Validation errors per model ----
+            # Validation errors per model
             val_errs_by_model: Dict[str, np.ndarray] = {}
+            val_labels: Optional[np.ndarray] = None  # capture ground-truth labels from val set if present
             for name, model in trained.items():
                 preds, trues, _, _ = self.reconstruct_all(model, val_loader, device=self.model_training_config.device)
+                # capture labels from validation loader for anomaly rate calculation
+                preds, trues, labels, _ = self.reconstruct_all(model, val_loader, device=self.model_training_config.device)
+                if val_labels is None and labels is not None:
+                    val_labels = labels
                 errs = per_window_score(preds, trues)
                 val_errs_by_model[name] = errs
 
@@ -482,7 +514,7 @@ class ModelTraining:
                     mlflow.log_metric(f"{name}_val_err_p95", float(np.percentile(errs, 95)))
                     mlflow.log_artifact(val_err_path, artifact_path=f"errors/val/{name}")
 
-            # ---- Ensemble on VALIDATION ----
+            # Ensemble on VALIDATION
             normalization = getattr(self.model_training_config, "ensemble_normalization", "zscore")
             val_ensemble_scores, normalizers = self.compute_ensemble_from_model_errors(
                 val_errs_by_model, normalization=normalization, normalizers=None
@@ -493,7 +525,7 @@ class ModelTraining:
             if self.mlflow_enabled:
                 mlflow.log_artifact(val_ens_path, artifact_path="ensemble/validation")
 
-            # ---- Threshold from VALIDATION ----
+            # Threshold from VALIDATION
             thr = pick_ensemble_threshold(
                 val_ensemble_scores,
                 method=getattr(self.model_training_config, "threshold_method", "quantile"),
@@ -517,6 +549,27 @@ class ModelTraining:
                 },
             }
 
+            # Add reference error stats and anomaly rate from VALIDATION
+            error_median = float(np.median(val_ensemble_scores))
+            error_p95 = float(np.percentile(val_ensemble_scores, 95))
+            val_flags = (val_ensemble_scores > thr).astype(int)
+            if val_labels is not None:
+                anomaly_rate_ref = float(np.mean(val_labels))
+            else:
+                anomaly_rate_ref = float(np.mean(val_flags))
+            ensemble_meta["error_stats"] = {"median": error_median, "p95": error_p95}
+            ensemble_meta["anomaly_rate_ref"] = anomaly_rate_ref
+           
+
+            
+            ensemble_meta["feature_stats"] = {
+                "mean": feature_means,
+                "std": feature_stds,
+                "global_mean": global_feature_mean,
+                "global_std": global_feature_std,
+            }
+            
+
             # ensuring JSON-serializable
             ensemble_meta["normalizers"] = {
                 k: {"mean": float(v["mean"]), "std": float(v["std"])} for k, v in ensemble_meta["normalizers"].items()
@@ -527,7 +580,7 @@ class ModelTraining:
             if self.mlflow_enabled and os.path.exists(ensemble_meta_path):
                 mlflow.log_artifact(ensemble_meta_path, artifact_path="ensemble/meta")
 
-            # ---- TEST: per-model errors, ensemble scores, flags ----
+            # per-model errors, ensemble scores, flags 
             test_errs_by_model: Dict[str, np.ndarray] = {}
             test_timestamps: Optional[np.ndarray] = None
 

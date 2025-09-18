@@ -107,6 +107,10 @@ class ModelTrainingConfig:
         self.use_amp = trainingpipeline.MODEL_USE_AMP
 
         self.model_inference_dir = os.path.join(training_pipeline_config.artifact_dir, trainingpipeline.MODEL_INFERENCE_DIR_NAME)
-        self.inference_results_file = os.path.join(self.model_inference_dir, trainingpipeline.MODEL_INFERENCE_RESULTS_FILE)
+        self.model_inference_results_dir = os.path.join(self.model_inference_dir, trainingpipeline.MODEL_INFERENCE_RESULTS_DIR)
+        self.inference_results_file = os.path.join(self.model_inference_results_dir, trainingpipeline.MODEL_INFERENCE_RESULTS_FILE)
+        self.model_inference_metrics_dir = os.path.join(self.model_inference_dir, trainingpipeline.MODEL_INFERENCE_METRICS_DIR_NAME)
+        self.model_inference_metrics_file = os.path.join(self.model_inference_metrics_dir, trainingpipeline.MODEL_INFERENCE_METRICS_FILE)
+        
 
 
