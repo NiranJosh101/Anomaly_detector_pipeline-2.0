@@ -27,9 +27,9 @@ from src.utils.common import (
     _ensure_dir_for,
     _cfg_path
 )
-from src.model_components.LSTM_ARCHITECTURE.lstm_AE import LSTMAutoencoder
-from src.model_components.GRU_ARCHITECTURE.gru_AE import GRUAutoencoder
-from src.model_components.CNN1D_ARCHITECTURE.cnn_1d_AE import CNNAutoencoder1D
+from model_components.LSTM_ARCHITECTURE.lstm_AE import LSTMAutoencoder
+from model_components.GRU_ARCHITECTURE.gru_AE import GRUAutoencoder
+from model_components.CNN1D_ARCHITECTURE.cnn_1d_AE import CNNAutoencoder1D
 
 
 try:

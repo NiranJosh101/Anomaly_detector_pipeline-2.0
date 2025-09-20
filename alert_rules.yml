@@ -1,0 +1,36 @@
+groups:
+- name: anomaly_detector_alerts
+  interval: 30s
+  rules:
+
+  - alert: EnsembleErrorMedianHigh
+    expr: (error_median_live / error_median_ref) > 2
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Median reconstruction error doubled ({{ $labels.model_version }})"
+
+  - alert: EnsembleErrorP95High
+    expr: (error_p95_live / error_p95_ref) > 2
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "95th percentile error > 2x baseline ({{ $labels.model_version }})"
+
+  - alert: AnomalyRateSpike
+    expr: anomaly_rate_live > (anomaly_rate_ref * 3)
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Anomaly rate > 3x baseline ({{ $labels.model_version }})"
+
+  - alert: Feature0MeanShift
+    expr: abs(feature_mean_live{feature="0"} - feature_mean_ref{feature="0"}) > 0.5
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Feature[0] mean drift > 0.5 ({{ $labels.model_version }})"

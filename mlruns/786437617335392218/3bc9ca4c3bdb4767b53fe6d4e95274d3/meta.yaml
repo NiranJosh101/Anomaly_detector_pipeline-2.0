@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/USER/Desktop/Anomaly_detector/mlruns/786437617335392218/3bc9ca4c3bdb4767b53fe6d4e95274d3/artifacts
+end_time: 1758297695973
+entry_point_name: ''
+experiment_id: '786437617335392218'
+lifecycle_stage: active
+run_id: 3bc9ca4c3bdb4767b53fe6d4e95274d3
+run_name: lstm_AE
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758297571520
+status: 3
+tags: []
+user_id: USER

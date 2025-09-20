@@ -29,9 +29,9 @@ from src.logging_setup import logger
 from src.config_entities.config_entity import ModelTrainingConfig
 from src.config_entities.artifact_entity import ModelTrainingArtifact, DataProcessingArtifact, ModelInferenceArtifact
 
-from src.model_components.LSTM_ARCHITECTURE.lstm_AE import LSTMAutoencoder
-from src.model_components.GRU_ARCHITECTURE.gru_AE import GRUAutoencoder
-from src.model_components.CNN1D_ARCHITECTURE.cnn_1d_AE import CNNAutoencoder1D
+from model_components.LSTM_ARCHITECTURE.lstm_AE import LSTMAutoencoder
+from model_components.GRU_ARCHITECTURE.gru_AE import GRUAutoencoder
+from model_components.CNN1D_ARCHITECTURE.cnn_1d_AE import CNNAutoencoder1D
 
 
 
@@ -46,7 +46,7 @@ class AEEnsemblePredictor:
             self.batch_size = model_training_config.batch_size
 
             # Load window config
-            cfg_path = self.data_processing_artifact.window_config_path  # ✅ fixed typo
+            cfg_path = self.data_processing_artifact.window_config_path  
             if not os.path.exists(cfg_path):
                 raise FileNotFoundError(f"Missing window config file at {cfg_path}")
             cfg = load_json(cfg_path)
@@ -242,9 +242,6 @@ class AEEnsemblePredictor:
 
         except Exception as e:
             raise AnomalyDetectionException(e, sys)
-
-
-
 
 
 

@@ -8,5 +8,6 @@ uvicorn
 python-multipart
 touch
 mlflow
+prometheus_client
 
 # -e .

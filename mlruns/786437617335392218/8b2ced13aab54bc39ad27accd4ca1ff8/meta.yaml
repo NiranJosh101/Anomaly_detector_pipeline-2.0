@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/USER/Desktop/Anomaly_detector/mlruns/786437617335392218/8b2ced13aab54bc39ad27accd4ca1ff8/artifacts
+end_time: 1758297944864
+entry_point_name: ''
+experiment_id: '786437617335392218'
+lifecycle_stage: active
+run_id: 8b2ced13aab54bc39ad27accd4ca1ff8
+run_name: gru_AE
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758297696018
+status: 3
+tags: []
+user_id: USER
