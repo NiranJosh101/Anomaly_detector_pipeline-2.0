@@ -216,9 +216,13 @@ API → loads artifacts, serves predictions
 * User-specific artifacts stored for inference
 * `/predict` loads models for real-time anomaly detection
 
+![Fast API swagger](docs/assets/ppoo.PNG)
 
 
-## 🛠 Tech Stack
+
+
+
+## Tech Stack
 
 * **Deep Learning**: PyTorch
 * **Experiment Tracking**: MLflow
@@ -277,8 +281,9 @@ API → loads artifacts, serves predictions
 ### Training Command
 
 ```bash
-python src/pipeline/train.py --config configs/train_config.yaml
+python src\components\training_compt\model_training.py
 ```
+![Grafana Dashboard](docs/assets/pro-%20training.PNG)
 
 ### API Inference Example
 
@@ -338,6 +343,8 @@ The system compares **reference metrics** (from training/validation) with **live
    * Configuration defined in `prometheus.yml`.
    * Alerting rules (e.g., drift thresholds) are defined in `alert_rules.yml`.
 
+   ![Prometheus Dashboard](docs/assets/pro%20promethus.PNG)
+
 3. **Grafana**
 
    * Connects to Prometheus as a data source.
@@ -346,6 +353,9 @@ The system compares **reference metrics** (from training/validation) with **live
      * Feature drift panel
      * Error drift panel
      * Anomaly drift panel
+
+   ![Grafana Dashboard](docs/assets/grafana.png)
+
 
 
 

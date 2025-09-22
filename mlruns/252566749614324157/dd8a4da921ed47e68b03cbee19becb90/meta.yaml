@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/USER/Desktop/Anomaly_detector/mlruns/252566749614324157/dd8a4da921ed47e68b03cbee19becb90/artifacts
+end_time: 1758552505616
+entry_point_name: ''
+experiment_id: '252566749614324157'
+lifecycle_stage: active
+run_id: dd8a4da921ed47e68b03cbee19becb90
+run_name: ensemble_training
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758551018567
+status: 3
+tags: []
+user_id: USER

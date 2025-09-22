@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/USER/Desktop/Anomaly_detector/mlruns/252566749614324157/326ad6e3641740aaa83d14fc2f7a1e12/artifacts
+end_time: 1758552487978
+entry_point_name: ''
+experiment_id: '252566749614324157'
+lifecycle_stage: active
+run_id: 326ad6e3641740aaa83d14fc2f7a1e12
+run_name: cnn_AE
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1758551473627
+status: 3
+tags: []
+user_id: USER

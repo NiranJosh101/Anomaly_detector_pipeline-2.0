@@ -1,0 +1,44 @@
+2025-09-22 07:23:31,448 - root - INFO - <<======Initiate the data ingestion=======>>
+2025-09-22 07:23:31,449 - root - INFO - Initiating Data Ingestion Pipeline...
+2025-09-22 07:23:31,449 - root - INFO - Starting data validation for uploaded file...
+2025-09-22 07:23:31,784 - root - INFO - Validated data copied to C:\Users\USER\Desktop\Anomaly_detector\data\Processed\valid_dataset\ValidatedData.csv\ValidatedData.csv
+2025-09-22 07:23:31,784 - root - INFO - Data Ingestion Artifact: DataIngestionArtifact(raw_data_file_path='C:\\Users\\USER\\Desktop\\Anomaly_detector\\data\\Processed\\valid_dataset\\ValidatedData.csv\\ValidatedData.csv')
+2025-09-22 07:23:31,785 - root - INFO - <<======Data Ingestion Complete=======>>
+2025-09-22 07:23:31,785 - root - INFO - <<======Initiate the data processing=======>>
+2025-09-22 07:23:31,907 - root - INFO - Validated data read from C:\Users\USER\Desktop\Anomaly_detector\data\Processed\valid_dataset\ValidatedData.csv\ValidatedData.csv
+2025-09-22 07:23:32,033 - root - INFO - Missing, invalid values, and duplicates handled. Time column: time
+2025-09-22 07:23:32,111 - root - INFO - Data is regular. No resampling needed.
+2025-09-22 07:23:32,121 - root - INFO - Time-series split complete. Train size: 9600, Validation size: 2400, Test size: 3000
+2025-09-22 07:23:32,125 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:32,128 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:32,131 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:32,133 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:32,135 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:32,138 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:32,186 - root - INFO - Window config saved successfully
+2025-09-22 07:23:32,231 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:32,235 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:32,235 - root - INFO - Preprocessing pipeline fitted and saved.
+2025-09-22 07:23:32,297 - root - INFO - Train, validation, and test datasets transformed.
+2025-09-22 07:23:32,403 - root - INFO - Windowing applied successfully. Train shape: (9585, 16, 16), Validation shape: (2385, 16, 16), Test shape: (2985, 16, 16)
+2025-09-22 07:23:32,493 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:32,550 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:32,550 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:32,560 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:32,561 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:32,571 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:32,571 - root - INFO - Train, validation, and test datasets created and saved successfully. Train size: 9585, Validation size: 2385, Test size: 2985
+2025-09-22 07:23:32,571 - root - INFO - Data processing pipeline completed successfully.
+2025-09-22 07:23:32,598 - root - INFO - <<======Data Processing Complete=======>>
+2025-09-22 07:23:33,276 - root - INFO - MLflow enabled. Experiment='anomaly_detection', URI='None'
+2025-09-22 07:23:33,276 - root - INFO - <<======Initiate the model training=======>>
+2025-09-22 07:23:33,660 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:33,777 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:33,777 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:33,791 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:33,791 - root - INFO - Entered the save_object method of MainUtils class
+2025-09-22 07:23:33,808 - root - INFO - Exited the save_object method of MainUtils class
+2025-09-22 07:23:33,810 - root - INFO - Dataloader successfully saved
+2025-09-22 07:23:36,976 - root - INFO - Model config saved at: Artifact\model_training\final_models\model_config.json
+2025-09-22 07:48:25,632 - root - INFO - <<======Model Training Complete=======>>
+2025-09-22 07:48:25,633 - root - INFO - <<======Training Pipeline Complete=======>>

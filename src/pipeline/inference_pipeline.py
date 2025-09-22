@@ -5,9 +5,9 @@ import pandas as pd
 from src.config_entities.config_entity import ModelTrainingConfig, DataProcessingConfig, TrainPipelineConfig
 from src.config_entities.artifact_entity import ModelTrainingArtifact, DataProcessingArtifact, ModelInferenceArtifact
 
-from src.model_components.LSTM_ARCHITECTURE.lstm_AE import LSTMAutoencoder
-from src.model_components.GRU_ARCHITECTURE.gru_AE import GRUAutoencoder
-from src.model_components.CNN1D_ARCHITECTURE.cnn_1d_AE import CNNAutoencoder1D
+from model_components.LSTM_ARCHITECTURE.lstm_AE import LSTMAutoencoder
+from model_components.GRU_ARCHITECTURE.gru_AE import GRUAutoencoder
+from model_components.CNN1D_ARCHITECTURE.cnn_1d_AE import CNNAutoencoder1D
 
 from src.components.prediction_compt.model_inference import AEEnsemblePredictor
 from src.exception_setup.exception import AnomalyDetectionException
