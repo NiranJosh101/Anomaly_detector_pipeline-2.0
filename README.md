@@ -1,5 +1,4 @@
 
----
 
 # End-to-End Anomaly Detection System
 
@@ -9,7 +8,7 @@ End-to-end anomaly detection system with deep learning, automated drift detectio
 
 It supports ensemble training (LSTM Autoencoder, GRU Autoencoder, CNN Autoencoder), drift detection (feature, error, anomaly), and full monitoring with Prometheus + Grafana. Deployment is containerized with Docker and runs on AWS infrastructure (ECR, S3, EC2) with CI/CD automation.
 
----
+
 
 ##  High-Level Architecture
 
@@ -25,7 +24,7 @@ flowchart TD
     H --> I[Retraining Loop / Drift Handling]
 ```
 
----
+
 
 ##  Features
 
@@ -37,9 +36,9 @@ flowchart TD
 * **Modular Stages**: Each pipeline stage emits clean, versioned artifacts (`.pkl`, `.json`, `.yaml`) for reproducibility
 * **Bring Your Own Data (BYOD) Extension**: Users can upload raw CSVs to automatically train and deploy their own anomaly detection models
 
----
 
----
+
+
 
 ## System Architecture
 
@@ -129,7 +128,7 @@ flowchart TD
   * Decoder: Mirrors the encoder, reconstructing the original sequence from the latent space.
 * **Strength**: Captures long-term temporal dependencies in sequential data, making it effective for datasets with strong seasonal or trend components.
 
----
+
 
 ###  GRU Autoencoder (GRU-AE)
 
@@ -139,7 +138,7 @@ flowchart TD
   * Decoder: Reconstructs sequences from the latent space.
 * **Strength**: More computationally efficient than LSTM while still capturing temporal dependencies, especially effective when data has medium-range patterns.
 
----
+
 
 ###  CNN Autoencoder (CNN-AE)
 
@@ -149,7 +148,7 @@ flowchart TD
   * Decoder: Transposed convolutions reconstruct input windows from compressed features.
 * **Strength**: Excels at detecting short-term local anomalies or sudden spikes/dips in the time-series.
 
----
+
 
 ###  Ensemble Technique — Error Aggregation & Ensemble
 
@@ -169,9 +168,9 @@ This ensemble approach balances the strengths of different architectures:
 
 By combining them, the system reduces false positives and increases robustness across varied time-series types.
 
----
 
----
+
+
 
 ###  Feedback Loop Summary
 
@@ -189,7 +188,7 @@ packaging → artifacts/
 API → loads artifacts, serves predictions  
 ```
 
----
+
 
 ###  Key Design Insights
 
@@ -209,7 +208,6 @@ API → loads artifacts, serves predictions
   Prometheus metrics and Grafana dashboards provide visibility into system health, anomaly trends, and data drift. This monitoring-first approach ensures the system can adapt to evolving data distributions and maintain accuracy in production.
 
 
----
 
 ###  BYOD (Bring Your Own Data) Extension
 
@@ -218,9 +216,7 @@ API → loads artifacts, serves predictions
 * User-specific artifacts stored for inference
 * `/predict` loads models for real-time anomaly detection
 
-> Full walkthrough of the entire porject and how everything ties in together is covered in the [blog post](https://medium.com/@niranjosh011/going-beyond-local-mlops-in-the-cloud-9ec7db023423)
 
----
 
 ## 🛠 Tech Stack
 
@@ -231,7 +227,7 @@ API → loads artifacts, serves predictions
 * **Cloud Deployment**: AWS (ECR, S3, EC2)
 * **Automation**: GitHub Actions (CI/CD)
 
----
+
 
 ##  Setup Instructions
 
@@ -274,7 +270,7 @@ API → loads artifacts, serves predictions
    * Pull & run container
    * Connect with S3 for artifact storage
 
----
+
 
 ##  Usage Examples
 
@@ -302,13 +298,13 @@ curl -X POST "http://localhost:8000/predict" \
 }
 ```
 
----
+
 
 #  Drift Monitoring Setup
 
 This project includes a **production-grade drift monitoring system** to track model stability over time. The monitoring stack combines **Prometheus** (metrics scraping and alerting) with **Grafana** (visualization dashboards).
 
----
+
 
 ##  What is Monitored?
 
@@ -327,7 +323,7 @@ The system compares **reference metrics** (from training/validation) with **live
 
   * Rate of anomalies detected during training vs inference (`anomaly_rate_ref` vs `anomaly_rate_live`).
 
----
+
 
 ## How it Works
 
@@ -351,7 +347,7 @@ The system compares **reference metrics** (from training/validation) with **live
      * Error drift panel
      * Anomaly drift panel
 
----
+
 
 ##  Key Files
 
@@ -361,7 +357,7 @@ The system compares **reference metrics** (from training/validation) with **live
 * `docker-compose.yml` → Brings up the full stack (pipeline, Prometheus, Grafana).
 * `Dockerfile` → Builds the anomaly detection pipeline container.
 
----
+
 
 ## Workflow Summary
 
@@ -370,7 +366,7 @@ The system compares **reference metrics** (from training/validation) with **live
 3. Grafana → visualizes drift dashboards (port **3000**).
 4. Alerts trigger if live metrics drift significantly from reference metrics.
 
----
+
 
 flowchart LR
     subgraph Pipeline["Anomaly Detection Pipeline"]
@@ -386,24 +382,32 @@ flowchart LR
 
 > Full walkthrough for the drift monitoring is covered in the [blog post](https://medium.com/@niranjosh011/going-beyond-local-mlops-in-the-cloud-9ec7db023423)
 
----
 
-## 📚 Lessons Learned
 
-* Modular design accelerates debugging and scaling
-* Strict artifact versioning ensures reproducibility
-* Prometheus + Grafana enable reliable ops observability
-* MLflow is critical for traceability across experiments
+##  Lessons Learned
 
----
+* **Modular design** made debugging, scaling, and extending the pipeline much faster.  
+* **Strict artifact and config versioning** ensured reproducibility and smooth handoff across environments.  
+* **MLflow tracking** was essential for experiment traceability and model comparison.  
+* **Prometheus + Grafana integration** gave real-time observability into system health, drift, and anomalies.  
 
-## 🔮 Future Work
+###  Key Challenges & Decisions
+
+* **Deep learning model design** — building robust LSTM, GRU, and CNN autoencoders required careful tuning to balance accuracy vs. training time.  
+* **Ensemble strategy** — deciding how to combine models (averaging vs. voting) was critical for reliable anomaly scoring.  
+* **Drift detection design** — selecting thresholds and monitoring strategies that generalized well across datasets took several iterations.  
+
+> Full walkthrough of the entire porject and how everything ties in together is covered in the [blog post](https://medium.com/@niranjosh011/going-beyond-local-mlops-in-the-cloud-9ec7db023423)
+
+
+
+## Future Work
 
 * Automated retraining triggered by detected drift
 * Kubernetes deployment for large-scale workloads
 * Real-time streaming pipeline for continuous data ingestion
 
----
+
 
 
 
