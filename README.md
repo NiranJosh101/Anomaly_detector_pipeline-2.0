@@ -354,7 +354,7 @@ The system compares **reference metrics** (from training/validation) with **live
      * Error drift panel
      * Anomaly drift panel
 
-   ![Grafana Dashboard](docs/assets/grafana.png)
+   ![Grafana Dashboard](docs/assets/grafana.PNG)
 
 
 
