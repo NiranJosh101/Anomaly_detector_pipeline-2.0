@@ -390,7 +390,7 @@ flowchart LR
     G -->|Panels| F2[Error Drift]
     G -->|Panels| F3[Anomaly Drift]
 
-> Full walkthrough for the drift monitoring is covered in the [blog post](https://medium.com/@niranjosh011/going-beyond-local-mlops-in-the-cloud-9ec7db023423)
+> Full walkthrough for the drift monitoring is covered in the [blog post](https://medium.com/@niranjosh011/drift-detection-in-anomaly-detection-systems-with-prometheus-grafana-3d0fd7137eca)
 
 
 
@@ -407,7 +407,7 @@ flowchart LR
 * **Ensemble strategy** — deciding how to combine models (averaging vs. voting) was critical for reliable anomaly scoring.  
 * **Drift detection design** — selecting thresholds and monitoring strategies that generalized well across datasets took several iterations.  
 
-> Full walkthrough of the entire porject and how everything ties in together is covered in the [blog post](https://medium.com/@niranjosh011/going-beyond-local-mlops-in-the-cloud-9ec7db023423)
+> Full walkthrough of the entire project and how everything ties in together is covered in the [blog post](https://medium.com/@niranjosh011/end-to-end-anomaly-detection-system-e5ecffe29640)
 
 
 
