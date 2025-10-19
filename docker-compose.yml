@@ -24,7 +24,6 @@ services:
     networks:
       - anomaly_net
 
-
   grafana:
     image: grafana/grafana:10.4.3
     container_name: grafana
@@ -75,6 +74,27 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - anomaly_net
+
+  # 🆕 GCS → Kafka Producer Service
+  producer_gcs:
+    build:
+      context: .
+      dockerfile: Dockerfile.producer
+    container_name: gcs_producer
+    depends_on:
+      - kafka
+    environment:
+      GCS_BUCKET: your-bucket-name
+      KAFKA_BROKER: kafka:9092
+      TOPIC: raw_events
+      GOOGLE_APPLICATION_CREDENTIALS: /app/keys/service_account.json
+      POLL_INTERVAL: 30
+    volumes:
+      - ./keys:/app/keys        # your GCP key folder
+      - ./producer_gcs.py:/app/producer_gcs.py
+    command: ["python", "producer_gcs.py"]
     networks:
       - anomaly_net
 
