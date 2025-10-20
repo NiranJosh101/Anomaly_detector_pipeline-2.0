@@ -1,0 +1,15 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+COPY producer/requirements.txt .
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY producer/producer_gcp.py .
+
+ENV PYTHONUNBUFFERED=1
+ENV KAFKA_BROKER=kafka:9092
+ENV TOPIC_NAME=raw_events
+
+CMD ["python", "producer_gcp.py"]

@@ -81,7 +81,7 @@ services:
   producer_gcs:
     build:
       context: .
-      dockerfile: Dockerfile.producer
+      dockerfile: producer/Dockerfile.producer
     container_name: gcs_producer
     depends_on:
       - kafka

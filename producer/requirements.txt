@@ -1,0 +1,4 @@
+kafka-python
+google-cloud-storage
+pandas
+python-dotenv
