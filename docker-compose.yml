@@ -117,6 +117,19 @@ services:
     networks:
       - anomaly_net
 
+
+  stream_service:
+    build: ./stream_service
+    container_name: anomaly_stream_service
+    environment:
+      - KAFKA_BROKER=kafka:9092
+      - RESULT_TOPIC=anomaly_predictions
+    ports:
+      - "8081:8081"
+    depends_on:
+      - kafka
+
+
 networks:
   anomaly_net:
     driver: bridge

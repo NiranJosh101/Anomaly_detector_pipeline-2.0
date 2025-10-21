@@ -420,4 +420,129 @@ flowchart LR
 
 
 
+##  Real-Time Streaming Pipeline for Continuous Data Ingestion
+
+This module adds a **real-time streaming layer** to the anomaly detection system — enabling live inference on continuously arriving data.
+
+###  Overview
+
+The streaming pipeline connects **Kafka → Spark → FastAPI** to perform **end-to-end real-time anomaly detection**:
+
+1. **Producer Service**
+   Streams raw events (e.g., metrics or sensor readings) into Kafka topic `raw_events`.
+
+2. **Spark Structured Streaming**
+   Subscribes to `raw_events`, applies the same preprocessing logic as in batch mode, and runs inference using an ensemble of autoencoders (`AEEnsemblePredictor`).
+   Results (anomaly scores, flags, timestamps) are written to a new Kafka topic: `anomaly_predictions`.
+
+3. **Stream API Service (FastAPI)**
+   A lightweight microservice that subscribes to `anomaly_predictions` and exposes endpoints to **view recent predictions live** — ideal for dashboards, alerting systems, or downstream monitoring tools.
+
+
+###  Components
+
+#### Spark Streaming Job (`spark_stream.py`)
+
+* Reads from Kafka topic `raw_events`
+* Applies preprocessing UDFs
+* Loads trained models from `/app/artifacts/models`
+* Performs ensemble inference (`AEEnsemblePredictor`)
+* Writes results (timestamp, anomaly score, label) to `anomaly_predictions`
+
+#### Stream API (`stream_service/main.py`)
+
+* Uses **AIOKafkaConsumer** for async message consumption
+* Keeps a rolling in-memory buffer (`deque`) of the latest 100 predictions
+* Exposes REST endpoints:
+
+  * `GET /latest` → Returns most recent predictions
+  * `GET /` → Health/status check
+
+
+### Docker Integration
+
+Both the Spark and Stream API services are part of the shared **`anomaly_net`** Docker network defined in `docker-compose.yml`.
+
+```yaml
+spark:
+  build:
+    context: .
+    dockerfile: spark/Dockerfile.spark
+  container_name: spark_stream
+  depends_on:
+    - kafka
+  environment:
+    KAFKA_BROKER: kafka:9092
+    RAW_TOPIC: raw_events
+    RESULT_TOPIC: anomaly_predictions
+  networks:
+    - anomaly_net
+
+stream_service:
+  build:
+    context: ./stream_service
+  container_name: stream_api
+  depends_on:
+    - kafka
+  environment:
+    KAFKA_BROKER: kafka:9092
+    RESULT_TOPIC: anomaly_predictions
+  ports:
+    - "8500:8500"
+  networks:
+    - anomaly_net
+
+
+Run everything with:
+
+```bash
+docker-compose up --build
+```
+
+
+### Testing
+
+Once up, verify data flow:
+
+1. Check Kafka topics:
+
+   * `raw_events` receiving events from producer
+   * `anomaly_predictions` receiving Spark output
+
+2. Access API:
+
+   ```bash
+   curl http://localhost:8500/latest
+   ```
+
+   Returns:
+
+   ```json
+   [
+     {
+       "timestamp": "2025-10-20T05:00:00Z",
+       "anomaly_score": 0.98,
+       "is_anomaly": true
+     },
+     ...
+   ]
+   ```
+
+3. Open `http://localhost:8080` for Kafka UI
+   (You’ll see both `raw_events` and `anomaly_predictions` topics.)
+
+
+
+
+### Summary
+
+This streaming layer completes the system’s **real-time anomaly detection pipeline**:
+
+> From data ingestion → live inference → actionable API results — all containerized and orchestrated.
+
+
+
+
+
+
 
