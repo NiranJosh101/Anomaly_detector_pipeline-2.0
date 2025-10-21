@@ -369,3 +369,17 @@ def _cfg_path(cfg: Any, attr: str, default_filename: str) -> str:
         return getattr(cfg, attr)
     base = getattr(cfg, "model_training_dir", "./models")
     return os.path.join(base, default_filename)
+
+
+def load_window_config(path: str) -> Dict[str, Any]:
+    if not os.path.exists(path):
+        raise FileNotFoundError(f"Window config not found at {path}")
+    with open(path, "r") as f:
+        return json.load(f)
+        
+
+def load_scaler(path: str):
+    if not os.path.exists(path):
+        return None
+    with open(path, "rb") as f:
+        return pickle.load(f)

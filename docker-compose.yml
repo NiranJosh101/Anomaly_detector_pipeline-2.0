@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-  
   pipeline:
     build: .
     container_name: anomaly_pipeline
@@ -77,7 +76,7 @@ services:
     networks:
       - anomaly_net
 
-  # 🆕 GCS → Kafka Producer Service
+  
   producer_gcs:
     build:
       context: .
@@ -92,9 +91,29 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: /app/keys/service_account.json
       POLL_INTERVAL: 30
     volumes:
-      - ./keys:/app/keys        # your GCP key folder
+      - ./keys:/app/keys
       - ./producer_gcs.py:/app/producer_gcs.py
     command: ["python", "producer_gcs.py"]
+    networks:
+      - anomaly_net
+
+  
+  spark:
+    image: bitnami/spark:3.5.1
+    container_name: spark_stream
+    depends_on:
+      - kafka
+    environment:
+      - SPARK_MODE=driver
+      - SPARK_MASTER_URL=spark://spark_stream:7077
+      - SPARK_SUBMIT_ARGS=--packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+    volumes:
+      - ./spark_stream.py:/spark/spark_stream.py
+    command: >
+      bash -c "spark-submit
+               --master local[*]
+               --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.1
+               /app/spark_stream.py"
     networks:
       - anomaly_net
 
