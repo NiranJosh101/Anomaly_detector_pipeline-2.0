@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlops-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: Anomaly-Detector
+  template:
+    metadata:
+      labels:
+        app: Anomaly-Detector
+    spec:
+      containers:
+      - name: Anomaly-Detector
+        image: dataguru97/anomalydetector-project:latest
+        ports:
+        - containerPort: 5000
